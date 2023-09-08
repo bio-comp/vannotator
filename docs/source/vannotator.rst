@@ -4,6 +4,14 @@ vannotator package
 Submodules
 ----------
 
+vannotator.utils module
+-----------------------
+
+.. automodule:: vannotator.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 vannotator.vannotator module
 ----------------------------
 

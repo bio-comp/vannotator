@@ -1,22 +1,19 @@
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[project]
+[tool.poetry]
 name = "vannotator"
-version = "0.0.1"
-authors = [
-  { name="Mike Hamilton", email="mike.hamilton7@gmail.com" },
-]
-description = "A simple variant annotator package"
-readme = "README.md"
-requires-python = ">=3.8"
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-]
+version = "0.1.0"
+description = ""
+authors = ["bio-comp <mike.hamilton7@gmail.com>"]
+license = "MIT"
 
-[project.urls]
-"Homepage" = "https://github.com/bio-comp/vannotator"
-"Bug Tracker" = "https://github.com/bio-comp/vannotator/issues"
+[tool.poetry.dependencies]
+python = "3.6.13"
+PyVCF = "^0.6.8"
+Sphinx = "^7.2.5"
+dataclasses = "^0.8"
+tenacity = "^8.2.3"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
