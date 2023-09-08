@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup
 
-package_dir = \
-{'': 'src'}
-
 packages = \
 ['vannotator']
 
@@ -26,7 +23,6 @@ setup_kwargs = {
     'maintainer': None,
     'maintainer_email': None,
     'url': None,
-    'package_dir': package_dir,
     'packages': packages,
     'package_data': package_data,
     'install_requires': install_requires,

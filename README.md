@@ -14,3 +14,8 @@ This program annotates a VCF file using VEP. Given a VCF file, a CSV is generate
 9. **effect**: The coding effect of the variant, i.e. protein coding, intron variant, etc.
 10. **minor_allele_freq**: The minor allele frequency, if present.
 
+## Installation
+This software was implemented to support both Anaconda and Poetry paradigms. 
+
+## Brief Synopsis
+Using a single HTTPS session for RESTful API calls, multiple requests are sent to annotate each variant in a VCF file
