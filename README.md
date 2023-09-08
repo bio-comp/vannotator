@@ -1,3 +1,3 @@
 # vannotator
 
-Simple VCF annotator for a coding challenge.
+VCF annotator using VEP

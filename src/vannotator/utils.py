@@ -10,8 +10,6 @@ from collections.abc import Sequence
 from pathlib import Path
 from os import access, W_OK, path
 
-import logging
-logger = logging.getLogger(__name__)
 
 POST = 'POST'
 GET = 'GET'
@@ -19,14 +17,16 @@ BASE_URL = 'https://rest.ensembl.org/vep/homo_sapiens/region/'
 HEADERS = {'Content-Type': 'application/json',
           'hgvs': 'true', 'CADD': 'true', 'pick': 'true', 'LoF': 'true'}
 
+
 # Settings for retrying functions
 RETRY_SETTINGS = {
     'wait': wait.wait_random_exponential(multiplier=1.0, exp_base=2),
     'stop': stop.stop_after_attempt(10)
 }
+    
 
 @retry(RETRY_SETTINGS)
-def get_payload(url: str, action: str, headers: dict = HEADERS) -> List or None:
+def get_payload(url: str, action: str, session: requests.Session, headers: dict = HEADERS) -> List or None:
     """Gets the payload for the provided request
 
     :param url: URL of endpoint
@@ -38,15 +38,12 @@ def get_payload(url: str, action: str, headers: dict = HEADERS) -> List or None:
     :return: List of JSON records
     :rtype: List or None
     """
-    logging.debug(f'{action} request to {url}')
     if action  == GET:  
-        response = requests.get(url, headers=headers)
+        response = session.get(url, headers=headers)
     elif action == POST:
-        response = requests.post(url, headers=headers)
+        response = session.post(url, headers=headers)
     else:
-        logging.warning(f'{action} is not supported')
         return None
-    logging.debug('Recieved status {response.status_code}')
     if response.status_code == 200:
         return response.json()
         

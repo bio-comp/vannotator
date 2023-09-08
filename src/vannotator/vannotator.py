@@ -12,6 +12,7 @@ from vcf import Reader, model
 from csv import writer
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
+import requests
 
 import logging
 import utils 
@@ -119,22 +120,33 @@ def write_to_csv(items: list, csv_writer: writer) -> None:
     csv_writer.writerow(items)
     
     
-def process_file(vcf_reader: Reader, csv_writer: writer, header: list = HEADERS) -> (int, int):
+def process_file(vcf_reader: Reader, csv_writer: writer, session: requests.Session) -> tuple:
+    """Given a VCF file, wirte annotations to a CSV file.
+
+    :param vcf_reader: Hanle to read VCF files
+    :type vcf_reader: Reader
+    :param csv_writer: Handle to write CSV records
+    :type csv_writer: writer
+    :param session: Reusable session for RESTful API requests
+    :type session: requests.Session
+    :return: (number of records, number of failed records)
+    :rtype: tuple
+    """
     variants = 0
     n_failed = 0
-    write_to_csv(header, csv_writer)
+    write_to_csv(HEADERS, csv_writer)
     
     for record in vcf_reader:
         variants += 1
         url = utils.url_builder(record.CHROM, record.INFO['WS'], record.INFO['WE'], record.ALT[0])
         logging.debug(f'Processing record {record}')
-        payload = utils.get_payload(url, utils.GET, utils.HEADERS)
+        payload = utils.get_payload(url, utils.GET, session, utils.HEADERS)
         if not payload:
             logging.warn(f'Could not fetch annotations for {record}')
             n_failed += 1
             continue
         variant = create_variant(record, payload[0])
-        write_to_csv([asdict(variant)[key] for key in header], csv_writer)
+        write_to_csv([asdict(variant)[key] for key in HEADERS], csv_writer)
         
     return (variants, n_failed)
 
@@ -148,13 +160,15 @@ def main(args: Namespace) -> None:
     logging.info('Started')
     logging.info(f'Reading variants from {args.file}')
     logging.info(f'Writing to {args.output}')
+    session = requests.Session()
     vcf_reader = Reader(open(args.file, 'r'))
     with open(args.output, 'w') as outfile:
         csv_writer = writer(outfile)
-        variants, n_failed = process_file(vcf_reader, csv_writer)
+        variants, n_failed = process_file(vcf_reader, csv_writer, session)
         logging.info(f'Processed {variants}, {n_failed} failed to be annotated')
        
     logging.info('Finished')
+    
 if __name__ == '__main__':
     args = setup_parser()
     logging_level = logging.INFO
